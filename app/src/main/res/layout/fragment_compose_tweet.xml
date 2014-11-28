@@ -1,0 +1,52 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.maadlabs.twitterui.ui.ComposeTweetFragment">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/tweetBarLinearLayout">
+        
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:id="@+id/backButtonImageView"
+            android:src="@drawable/back_arrow"/>
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:id="@+id/userDisplayPictureImageView"
+            android:layout_marginLeft="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/userNameTextView"
+            android:layout_marginTop="8dp"
+            tools:text="Vivek Yanamandra"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+        <com.gc.materialdesign.views.ButtonFlat
+            android:id="@+id/tweetButtonFlat"
+            android:layout_margin="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:text="Tweet" />
+        </LinearLayout>
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/composeTweetEditText"
+        android:layout_below="@id/tweetBarLinearLayout"
+        android:gravity="top"
+        android:hint="Compose Tweet.."/>
+</RelativeLayout>

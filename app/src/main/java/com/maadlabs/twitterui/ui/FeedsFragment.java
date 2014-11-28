@@ -1,5 +1,7 @@
 package com.maadlabs.twitterui.ui;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -45,6 +48,8 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
     SharedPreferences mSharedPreferences;
     Context mContext;
     TextView mNoTweetsTextView;
+    EditText mTweetEditText;
+    TweetLoad mTweetLoad;
 
     public static FeedsFragment newInstance(String param1, String param2) {
         FeedsFragment fragment = new FeedsFragment();
@@ -58,15 +63,22 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
             mStatusArrayList.addAll(tweetLoad.getResult().getStatusList());
             mTweetsAdapter.notifyDataSetChanged();
             mSharedPreferences.edit().putLong("max_id", tweetLoad.getResult().getMaxId()).commit();
+            mTweetLoad = tweetLoad;
             setConnectionViews(NetworkInfo.CONNECTED);
         } else if(mStatusArrayList.size() == 0) {
             setConnectionViews(NetworkInfo.NO_NEW_DATA);
         }
+        mRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void failure(RetrofitError error) {
-        setConnectionViews(NetworkInfo.DISCONNECTED);
+
+        if(mStatusArrayList.size() == 0)
+            setConnectionViews(NetworkInfo.DISCONNECTED);
+        else
+            if(mRefreshLayout.isRefreshing())
+                mRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -74,12 +86,23 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
         if(v.getId() == R.id.retryConnectionButton) {
             setConnectionViews(NetworkInfo.CONNECTING);
             mTwitterAPI.loadTweets(3, USER_ID, this);
+        } else if(v.getId() == R.id.newTweetEditText) {
+            ComposeTweetFragment composeTweetFragment = new ComposeTweetFragment();
+            Bundle extras = new Bundle();
+            extras.putString("type", "newTweet");
+            extras.putString("user_name", "UserName");
+            extras.putString("user_image", Integer.toString(R.drawable.user_place_holder));
+            composeTweetFragment.setArguments(extras);
+            FragmentManager fragmentManager = getActivity().getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.main, composeTweetFragment).addToBackStack(null).commit();
         }
     }
 
     @Override
     public void onRefresh() {
         mTwitterAPI.loadTweets(3, USER_ID, mSharedPreferences.getLong("max_id", 0), this);
+
     }
 
 
@@ -113,8 +136,7 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
     private void initProperties() {
         mRefreshLayout.setOnRefreshListener(this);
         mRefreshLayout.setColorScheme(android.R.color.holo_blue_bright, android.R.color.holo_blue_dark, android.R.color.holo_blue_light,
-                Color.rgb(0, 0, 44));
-
+                android.R.color.holo_blue_bright);
     }
 
     private void initAdapters() {
@@ -125,6 +147,7 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
 
     private void initListeners() {
         mRetryButton.setOnClickListener(this);
+        mTweetEditText.setOnClickListener(this);
     }
 
     private void initData() {
@@ -179,6 +202,7 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
         mNoConnectionLinearLayout = (LinearLayout) mView.findViewById(R.id.noConnectionLinearLayout);
         mProgressBar = (CircularProgressBar) mView.findViewById(R.id.circularProgressBar);
         mNoTweetsTextView = (TextView) mView.findViewById(R.id.noTweetsTextView);
+        mTweetEditText = (EditText) mView.findViewById(R.id.newTweetEditText);
     }
 
 

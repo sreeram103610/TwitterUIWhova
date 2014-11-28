@@ -9,6 +9,8 @@ import java.util.ArrayList;
  */
 public class TweetResult {
 
+    @SerializedName("result")
+    private String mResult;
     @SerializedName("max_id")
     private Long mMaxId;
     @SerializedName("is_anonymous")
@@ -38,5 +40,13 @@ public class TweetResult {
 
     public void setStatusList(ArrayList<Status> statusList) {
         mStatusList = statusList;
+    }
+
+    public String isResult() {
+        return mResult;
+    }
+
+    public void setResult(String result) {
+        mResult = result;
     }
 }
