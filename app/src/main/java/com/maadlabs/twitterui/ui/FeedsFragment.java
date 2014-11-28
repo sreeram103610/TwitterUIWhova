@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -50,6 +51,7 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
     TextView mNoTweetsTextView;
     EditText mTweetEditText;
     TweetLoad mTweetLoad;
+    FrameLayout mFeedsFrameLayout;
 
     public static FeedsFragment newInstance(String param1, String param2) {
         FeedsFragment fragment = new FeedsFragment();
@@ -171,23 +173,23 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
 
         if(status == NetworkInfo.DISCONNECTED) {
             mProgressBar.setVisibility(View.GONE);
-            mRefreshLayout.setVisibility(View.GONE);
+            mFeedsFrameLayout.setVisibility(View.GONE);
             mNoConnectionLinearLayout.setVisibility(View.VISIBLE);
             mNoTweetsTextView.setVisibility(View.GONE);
         } else if(status == NetworkInfo.CONNECTING) {
             mProgressBar.setVisibility(View.VISIBLE);
-            mRefreshLayout.setVisibility(View.GONE);
+            mFeedsFrameLayout.setVisibility(View.GONE);
             mNoConnectionLinearLayout.setVisibility(View.GONE);
             mNoTweetsTextView.setVisibility(View.GONE);
         } else if(status == NetworkInfo.CONNECTED) {
             mProgressBar.setVisibility(View.GONE);
-            mRefreshLayout.setVisibility(View.VISIBLE);
+            mFeedsFrameLayout.setVisibility(View.VISIBLE);
             mNoConnectionLinearLayout.setVisibility(View.GONE);
             mNoTweetsTextView.setVisibility(View.GONE);
         } else if(status == NetworkInfo.NO_NEW_DATA) {
             mNoTweetsTextView.setVisibility(View.VISIBLE);
             mProgressBar.setVisibility(View.GONE);
-            mRefreshLayout.setVisibility(View.GONE);
+            mFeedsFrameLayout.setVisibility(View.GONE);
             mNoConnectionLinearLayout.setVisibility(View.GONE);
 
         }
@@ -203,6 +205,7 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
         mProgressBar = (CircularProgressBar) mView.findViewById(R.id.circularProgressBar);
         mNoTweetsTextView = (TextView) mView.findViewById(R.id.noTweetsTextView);
         mTweetEditText = (EditText) mView.findViewById(R.id.newTweetEditText);
+        mFeedsFrameLayout = (FrameLayout) mView.findViewById(R.id.feedsFrameLayout);
     }
 
 
