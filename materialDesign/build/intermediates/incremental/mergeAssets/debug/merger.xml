@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="2" >
+
+    <dataSet config="main" >
+        <source path="/Users/brainfreak/Android/TwitterUI/materialDesign/src/main/assets" >
+            <file
+                name="sprite_check.png"
+                path="/Users/brainfreak/Android/TwitterUI/materialDesign/src/main/assets/sprite_check.png" />
+        </source>
+    </dataSet>
+    <dataSet config="debug" >
+        <source path="/Users/brainfreak/Android/TwitterUI/materialDesign/src/debug/assets" />
+    </dataSet>
+
+</merger>

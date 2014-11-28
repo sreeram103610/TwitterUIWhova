@@ -1,0 +1,1 @@
+include ':app', ':materialDesign', ':gson-2.3.1'

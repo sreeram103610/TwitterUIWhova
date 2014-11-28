@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              >
+
+        <ImageView
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_margin="8dp"
+            android:id="@+id/userDisplayPictureImageView"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/userNameTextView"
+            tools:text="Vivek Yanamandra"
+            android:layout_toRightOf="@id/userDisplayPictureImageView"
+            android:layout_margin="8dp"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            tools:text="My First tweet!"
+            android:id="@+id/userTweetTextView"
+            android:layout_below="@+id/userNameTextView"
+            android:layout_alignLeft="@+id/userNameTextView"
+            android:layout_alignStart="@+id/userNameTextView"/>
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignLeft="@id/userTweetTextView"
+        android:layout_below="@id/userDisplayPictureImageView"
+        android:id="@+id/twitterOptionsLinearLayout"
+        >
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/reply_icon"
+            android:layout_weight="1"
+            android:background="@drawable/background_transparent"
+            android:id="@+id/replyButton"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/retweet_icon"
+            android:layout_weight="1"
+            android:background="@drawable/background_transparent"
+            android:id="@+id/retweetButton"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/favourite_icon"
+            android:layout_weight="1"
+            android:background="@drawable/background_transparent"
+            android:id="@+id/favouriteButton"/>
+        </LinearLayout>
+
+
+</RelativeLayout>
