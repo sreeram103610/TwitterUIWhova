@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by brainfreak on 11/28/14.
  */
-public class SentTweet {
+public class TweetResponse {
 
     @SerializedName("type")
     private String mType;

@@ -2,15 +2,13 @@ package com.maadlabs.twitterui.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.maadlabs.twitterui.model.SentTweet;
-import com.maadlabs.twitterui.model.TweetLoad;
+import com.maadlabs.twitterui.model.TweetResponse;
 
 /**
  * Created by brainfreak on 11/28/14.
@@ -19,6 +17,8 @@ public class TweetService extends Service {
 
     private Handler mHandler;
     private Bundle mResultBundle;
+    private Intent mIntent;
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -26,40 +26,48 @@ public class TweetService extends Service {
     }
 
     @Override
-    public int onStartCommand(final Intent intent, int flags, int startId) {
-
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        mIntent = intent;
         mResultBundle = new Bundle();
-        mHandler = new Handler() {
+
+
+        AsyncTask asyncTask = new AsyncTask() {
+
             @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
+            protected Object doInBackground(Object[] params) {
+                TwitterAPI twitterAPI = MyServer.getRESTAdapter().create(TwitterAPI.class);
+                Bundle bundle = mIntent.getExtras();
+                String requestType = bundle.getString("type");
+                TweetResponse tweetResponse = null;
+
+                if(requestType.equals("new_tweet")) {
+                    tweetResponse = twitterAPI.sendNewTweet(bundle.getInt("user_id"), bundle.getString("event_name"), bundle.getString("content"));
+
+                } else if(requestType.equals("favourite_tweet")) {
+                    tweetResponse = twitterAPI.sendFavouriteTweet(bundle.getInt("user_id"), bundle.getString("event_name"), bundle.getString("tweet_id"));
+
+                } else if(requestType.equals("retweet")) {
+                    tweetResponse = twitterAPI.sendRetweet(bundle.getInt("user_id"), bundle.getString("event_name"), bundle.getString("tweet_id"));
+                }
+
+                if (tweetResponse.getResult().contains("success") && mResultBundle.getString("type").equals("new_tweet")) {
+                    mResultBundle.putString("message", "Tweet Sent!");
+                } else {
+                    mResultBundle.putString("message", "Connection Error");
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+
+                Toast.makeText(getApplicationContext(), mResultBundle.getString("message"), Toast.LENGTH_LONG).show();
             }
         };
 
-        new Thread() {
-            @Override
-            public void run() {
-                TwitterAPI twitterAPI = MyServer.getRESTAdapter().create(TwitterAPI.class);
-                Bundle bundle = intent.getExtras();
+        asyncTask.execute(new Object[1]);
 
-                SentTweet tweetLoad = twitterAPI.sendNewTweet(bundle.getInt("user_id"), bundle.getString("user_name"), bundle.getString("content"));
-                Message message = new Message();
-                if(tweetLoad.getResult().contains("success")) {
-                    mResultBundle.putString("message", "Tweet Sent!");
-                } else {
-                    mResultBundle.putString("message", "Error sending tweet");
-                }
-                message.setData(mResultBundle);
-                mHandler.dispatchMessage(message);
-            }
-        }.start();
-
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getApplicationContext(), mResultBundle.getString("message"), Toast.LENGTH_LONG).show();
-            }
-        });
         return Service.START_NOT_STICKY;
     }
 }

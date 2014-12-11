@@ -4,14 +4,13 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -36,11 +35,13 @@ import retrofit.client.Response;
 
 public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
-    public static final String USER_ID = "whova_201411";
+    public static final String EVENT_NAME = "whova_201411";
+    public static final int USER_ID = 3;
     View mView;
     ListView mTweetsListView;
     SwipeRefreshLayout mRefreshLayout;
     ButtonRectangle mRetryButton;
+    Button mReplyButton, mRetweetButton, mFavouriteButton;
     LinearLayout mNoConnectionLinearLayout;
     CircularProgressBar mProgressBar;
     TwitterAPI mTwitterAPI;
@@ -87,7 +88,7 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
     public void onClick(View v) {
         if(v.getId() == R.id.retryConnectionButton) {
             setConnectionViews(NetworkInfo.CONNECTING);
-            mTwitterAPI.loadTweets(3, USER_ID, this);
+            mTwitterAPI.loadTweets(3, EVENT_NAME, this);
         } else if(v.getId() == R.id.newTweetEditText) {
             ComposeTweetFragment composeTweetFragment = new ComposeTweetFragment();
             Bundle extras = new Bundle();
@@ -103,7 +104,7 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
 
     @Override
     public void onRefresh() {
-        mTwitterAPI.loadTweets(3, USER_ID, mSharedPreferences.getLong("max_id", 0), this);
+        mTwitterAPI.loadTweets(3, EVENT_NAME, mSharedPreferences.getLong("max_id", 0), this);
 
     }
 
@@ -164,7 +165,7 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
 
         setConnectionViews(NetworkInfo.CONNECTING);
             if(ConnectionManager.isOnline(getActivity().getBaseContext()))
-                mTwitterAPI.loadTweets(3, USER_ID, this);
+                mTwitterAPI.loadTweets(3, EVENT_NAME, this);
             else
                 setConnectionViews(NetworkInfo.DISCONNECTED);
     }

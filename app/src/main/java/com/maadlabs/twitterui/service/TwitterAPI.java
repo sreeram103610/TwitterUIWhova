@@ -1,13 +1,13 @@
 package com.maadlabs.twitterui.service;
 
-import com.maadlabs.twitterui.model.SentTweet;
+import com.maadlabs.twitterui.model.TweetResponse;
 import com.maadlabs.twitterui.model.TweetLoad;
 
 import retrofit.Callback;
+import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.POST;
-import retrofit.http.Path;
 import retrofit.http.Query;
 
 /**
@@ -21,10 +21,20 @@ public interface TwitterAPI {
     @GET("/event/tw/load/")
     public void loadTweets(@Query("user_id") Integer userId, @Query("event") String eventId, @Query("max_id") Long max_id, Callback<TweetLoad> tweetLoadCallback);
 
+    @FormUrlEncoded
     @POST("/event/tw/new/")
-    public SentTweet sendNewTweet(@Query("user_id") Integer userId, @Query("event") String eventId, @Query("content") String content);
+    public TweetResponse sendNewTweet(@Field("user_id") Integer userId, @Field("event") String eventId, @Field("content") String content);
 
+    @FormUrlEncoded
     @POST("/event/tw/new/")
-    public SentTweet sendNewTweet(@Query("user_id") Integer userId, @Query("event") String eventId, @Query("content") String content, @Query("reply_to_id") Long replyToId);
+    public TweetResponse sendNewTweet(@Field("user_id") Integer userId, @Field("event") String eventId, @Field("content") String content, @Field("reply_to_id") Long replyToId);
+
+    @FormUrlEncoded
+    @POST("/event/tw/retw/")
+    public TweetResponse sendRetweet(@Field("user_id") Integer userId, @Field("event") String eventId, @Field("tweet_id") String tweetId);
+
+    @FormUrlEncoded
+    @POST("/event/tw/fav/")
+    public TweetResponse sendFavouriteTweet(@Field("user_id") Integer userId, @Field("event") String eventId, @Field("tweet_id") String tweetId);
 
 }

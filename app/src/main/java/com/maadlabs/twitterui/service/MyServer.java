@@ -1,6 +1,10 @@
 package com.maadlabs.twitterui.service;
 
+import android.util.Log;
+
+import retrofit.ErrorHandler;
 import retrofit.RestAdapter;
+import retrofit.RetrofitError;
 
 /**
  * Created by brainfreak on 11/27/14.

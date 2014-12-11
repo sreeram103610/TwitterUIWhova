@@ -14,11 +14,8 @@ import android.widget.TextView;
 
 import com.gc.materialdesign.views.ButtonFlat;
 import com.maadlabs.twitterui.R;
-import com.maadlabs.twitterui.model.TweetLoad;
 import com.maadlabs.twitterui.service.ConnectionManager;
-import com.maadlabs.twitterui.service.MyServer;
 import com.maadlabs.twitterui.service.TweetService;
-import com.maadlabs.twitterui.service.TwitterAPI;
 import com.squareup.picasso.Picasso;
 
 public class ComposeTweetFragment extends Fragment implements View.OnClickListener {
@@ -102,8 +99,10 @@ public class ComposeTweetFragment extends Fragment implements View.OnClickListen
 
         Intent intent = new Intent(mContext, TweetService.class);
         Bundle bundle = new Bundle();
+
+        bundle.putString("type", "new_tweet");
         bundle.putInt("user_id", 3);
-        bundle.putString("user_name", FeedsFragment.USER_ID);
+        bundle.putString("event_name", FeedsFragment.EVENT_NAME);
         bundle.putString("content", s);
         intent.putExtras(bundle);
         Log.i("tweet", "fn");
