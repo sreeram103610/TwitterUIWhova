@@ -16,6 +16,8 @@ import com.maadlabs.twitterui.ui.FeedsFragment;
 
 public class MainActivity extends Activity {
 
+    public static final String HASHTAG = "#WhovaTrialProject";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

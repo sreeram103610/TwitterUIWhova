@@ -52,11 +52,11 @@ public class ComposeTweetFragment extends Fragment implements View.OnClickListen
     }
 
     private void initUserViews() {
-        if(mExtras.getString("type").equals("newTweet")) {
-            mUserNameTextView.setText(mExtras.getString("user_name"));
-            Picasso.with(getActivity().getBaseContext()).load(Integer.parseInt(mExtras.getString("user_image"))).fit()
+
+        mComposeMessageEditText.setText(mExtras.getString("hash_tag"));
+        mUserNameTextView.setText(mExtras.getString("user_name"));
+        Picasso.with(getActivity().getBaseContext()).load(Integer.parseInt(mExtras.getString("user_image"))).fit()
                 .into(mUserImageView);
-        }
     }
 
 
@@ -103,10 +103,11 @@ public class ComposeTweetFragment extends Fragment implements View.OnClickListen
         Intent intent = new Intent(mContext, TweetService.class);
         Bundle bundle = new Bundle();
 
-        bundle.putString("type", "new_tweet");
+        bundle.putString("type", mExtras.getString("type"));
         bundle.putInt("user_id", 3);
         bundle.putString("event_name", FeedsFragment.EVENT_NAME);
         bundle.putString("content", s);
+        bundle.putString("reply_to_id", mExtras.getString("reply_to_id", ""));
         intent.putExtras(bundle);
         Log.i("tweet", "fn");
         mContext.startService(intent);

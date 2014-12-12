@@ -42,17 +42,17 @@ public class TweetService extends Service {
 
                 if(requestType.equals("new_tweet")) {
                     tweetResponse = twitterAPI.sendNewTweet(bundle.getInt("user_id"), bundle.getString("event_name"), bundle.getString("content"));
-
                 } else if(requestType.equals("favourite_tweet")) {
                     tweetResponse = twitterAPI.sendFavouriteTweet(bundle.getInt("user_id"), bundle.getString("event_name"), bundle.getString("tweet_id"));
-
                 } else if(requestType.equals("retweet")) {
                     tweetResponse = twitterAPI.sendRetweet(bundle.getInt("user_id"), bundle.getString("event_name"), bundle.getString("tweet_id"));
+                } else if(requestType.equals("reply_tweet")) {
+                    tweetResponse = twitterAPI.sendNewTweet(bundle.getInt("user_id"), bundle.getString("event_name"), bundle.getString("content"), Long.parseLong(bundle.getString("reply_to_id")));
                 }
 
-                if (tweetResponse.getResult().contains("success") && mResultBundle.getString("type").equals("new_tweet")) {
+                if (tweetResponse.getResult().contains("success") && (requestType.equals("new_tweet") || requestType.equals("reply_tweet"))) {
                     mResultBundle.putString("message", "Tweet Sent!");
-                } else {
+                } else if(tweetResponse.getResult().contains("fail")) {
                     mResultBundle.putString("message", "Connection Error");
                 }
 
@@ -62,6 +62,7 @@ public class TweetService extends Service {
             @Override
             protected void onPostExecute(Object o) {
 
+                if(mResultBundle.getString("message") != null)
                 Toast.makeText(getApplicationContext(), mResultBundle.getString("message"), Toast.LENGTH_LONG).show();
             }
         };

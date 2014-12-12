@@ -28,6 +28,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/userNameTextView"
             android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
             tools:text="Vivek Yanamandra"
             android:textSize="18sp"
             android:textStyle="bold"/>
@@ -47,6 +48,8 @@
         android:layout_height="fill_parent"
         android:id="@+id/composeTweetEditText"
         android:layout_below="@id/tweetBarLinearLayout"
+        android:background="#00000000"
         android:gravity="top"
+        android:padding="8dp"
         android:hint="Compose Tweet.."/>
 </RelativeLayout>

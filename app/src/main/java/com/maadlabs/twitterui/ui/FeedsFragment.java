@@ -3,13 +3,16 @@ package com.maadlabs.twitterui.ui;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -18,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.gc.materialdesign.views.ButtonRectangle;
+import com.maadlabs.twitterui.MainActivity;
 import com.maadlabs.twitterui.R;
 import com.maadlabs.twitterui.model.Status;
 import com.maadlabs.twitterui.model.TweetLoad;
@@ -92,9 +96,10 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
         } else if(v.getId() == R.id.newTweetEditText) {
             ComposeTweetFragment composeTweetFragment = new ComposeTweetFragment();
             Bundle extras = new Bundle();
-            extras.putString("type", "newTweet");
+            extras.putString("type", "new_tweet");
             extras.putString("user_name", "UserName");
             extras.putString("user_image", Integer.toString(R.drawable.user_place_holder));
+            extras.putString("hash_tag", MainActivity.HASHTAG);
             composeTweetFragment.setArguments(extras);
             FragmentManager fragmentManager = getActivity().getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -144,13 +149,22 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
 
     private void initAdapters() {
 
-        mTweetsAdapter = new CustomListAdapter(getActivity().getBaseContext(), R.layout.tweet_row, mStatusArrayList);
+        mTweetsAdapter = new CustomListAdapter(getActivity(), getActivity().getBaseContext(), R.layout.tweet_row, mStatusArrayList);
         mTweetsListView.setAdapter(mTweetsAdapter);
     }
 
     private void initListeners() {
         mRetryButton.setOnClickListener(this);
         mTweetEditText.setOnClickListener(this);
+        mTweetsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Status status = (Status) parent.getAdapter().getItem(position);
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/search?q=%23" + MainActivity.HASHTAG.substring(1)));
+                startActivity(browserIntent);
+            }
+        });
     }
 
     private void initData() {

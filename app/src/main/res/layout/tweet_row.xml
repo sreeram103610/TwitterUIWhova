@@ -5,7 +5,8 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@android:drawable/picture_frame"
+              android:background="#FFF"
+              android:descendantFocusability="blocksDescendants"
               >
 
         <ImageView
@@ -46,7 +47,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/reply_icon"
+            android:drawableLeft="@drawable/reply_unchecked"
             android:layout_weight="1"
             android:background="@drawable/background_transparent"
             android:id="@+id/replyButton"/>
@@ -54,7 +55,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/retweet_icon"
+            android:drawableLeft="@drawable/retweet_unchecked"
             android:layout_weight="1"
             android:background="@drawable/background_transparent"
             android:id="@+id/retweetButton"/>
@@ -62,7 +63,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/favourite_icon"
+            android:drawableLeft="@drawable/favourite_icon_unchecked"
             android:layout_weight="1"
             android:background="@drawable/background_transparent"
             android:id="@+id/favouriteButton"/>
