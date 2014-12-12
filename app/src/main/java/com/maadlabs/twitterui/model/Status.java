@@ -41,7 +41,7 @@ public class Status {
     private String mUserName;
 
     @SerializedName("fav_count")
-    private Double mFavouriteCount;
+    private Long mFavouriteCount;
 
     public boolean isRetweet() {
         return mRetweet;
@@ -131,11 +131,11 @@ public class Status {
         mUserName = userName;
     }
 
-    public Double getFavouriteCount() {
+    public Long getFavouriteCount() {
         return mFavouriteCount;
     }
 
-    public void setFavouriteCount(Double favouriteCount) {
+    public void setFavouriteCount(Long favouriteCount) {
         mFavouriteCount = favouriteCount;
     }
 }

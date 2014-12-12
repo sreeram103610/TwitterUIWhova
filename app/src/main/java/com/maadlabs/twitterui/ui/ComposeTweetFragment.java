@@ -16,6 +16,7 @@ import com.gc.materialdesign.views.ButtonFlat;
 import com.maadlabs.twitterui.R;
 import com.maadlabs.twitterui.service.ConnectionManager;
 import com.maadlabs.twitterui.service.TweetService;
+import com.maadlabs.twitterui.util.CustomFonts;
 import com.squareup.picasso.Picasso;
 
 public class ComposeTweetFragment extends Fragment implements View.OnClickListener {
@@ -66,6 +67,8 @@ public class ComposeTweetFragment extends Fragment implements View.OnClickListen
         initReferences();
         initProperties();
         initListeners();
+
+        CustomFonts.init(mContext, mView);
         return mView;
     }
 

@@ -17,6 +17,7 @@ import com.maadlabs.twitterui.model.Status;
 import com.maadlabs.twitterui.service.ConnectionManager;
 import com.maadlabs.twitterui.service.MyServer;
 import com.maadlabs.twitterui.service.TweetService;
+import com.maadlabs.twitterui.util.CustomFonts;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -46,8 +47,7 @@ public class CustomListAdapter extends ArrayAdapter<Status> {
         View row;
         StatusHolder holder = null;
 
-        if(convertView == null)
-        {
+        if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(mResource, parent, false);  // like a template to add values
@@ -60,10 +60,7 @@ public class CustomListAdapter extends ArrayAdapter<Status> {
             holder.mDisplayPictureImageView = (ImageView) row.findViewById(R.id.userDisplayPictureImageView);
             holder.mReplyButton = (Button) row.findViewById(R.id.replyButton);
             row.setTag(holder);
-        }
-
-        else
-        {
+        } else {
             row = convertView;
             holder = (StatusHolder) row.getTag();
         }
@@ -75,18 +72,19 @@ public class CustomListAdapter extends ArrayAdapter<Status> {
 
         initListeners(holder, status);
 
-        if(status.getStatusPicture() != null && status.getStatusPicture().length() > 0) {
+        if (status.getStatusPicture() != null && status.getStatusPicture().length() > 0) {
             Log.i("dp", status.getStatusPicture());
             Picasso.with(getContext()).load(status.getStatusPicture()).fit().into(holder.mDisplayPictureImageView);
         } else {
             Picasso.with(getContext()).load(R.drawable.user_place_holder).fit().into(holder.mDisplayPictureImageView);
         }
 
-        if(status.getFavouriteCount() != null && status.getFavouriteCount() > 0)
+        if (status.getFavouriteCount() != null && status.getFavouriteCount() > 0)
             holder.mFavouriteButton.setText(status.getFavouriteCount() + "");
-        if(status.getRetweetCount() != null && status.getRetweetCount() > 0)
-            holder.mRetweetButton.setText(status.getRetweetCount() + "");
+        if (status.getRetweetCount() != null && status.getRetweetCount() > 0)
+            holder.mRetweetButton.setText(Long.toString(status.getRetweetCount()));
 
+        CustomFonts.init(getContext(), row);
         return row;
     }
 
@@ -116,7 +114,7 @@ public class CustomListAdapter extends ArrayAdapter<Status> {
                             intent.putExtras(bundle);
                             getContext().startService(intent);
                             if(oldCountString.length() > 0) {
-                                holder.mRetweetButton.setText(Integer.parseInt(oldCountString) + 1);
+                                holder.mRetweetButton.setText(Integer.parseInt(oldCountString) + 1 + "");
                             } else {
                                 holder.mRetweetButton.setText(1+"");
                             }
@@ -133,7 +131,7 @@ public class CustomListAdapter extends ArrayAdapter<Status> {
                             intent.putExtras(bundle);
                             getContext().startService(intent);
                             if(oldCountString.length() > 0) {
-                                holder.mFavouriteButton.setText(Integer.parseInt(oldCountString) + 1);
+                                holder.mFavouriteButton.setText(Integer.parseInt(oldCountString) + 1 + "");
                             } else {
                                 holder.mFavouriteButton.setText(1+"");
                             }
