@@ -67,9 +67,10 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
     public void success(TweetLoad tweetLoad, Response response) {
 
         if(tweetLoad.getResult().getMaxId() != -1) {
-            mStatusArrayList.addAll(tweetLoad.getResult().getStatusList());
+            mStatusArrayList.clear();
+            mStatusArrayList.addAll(0, tweetLoad.getResult().getStatusList());
             mTweetsAdapter.notifyDataSetChanged();
-            mSharedPreferences.edit().putLong("max_id", tweetLoad.getResult().getMaxId()).commit();
+         //   mSharedPreferences.edit().putLong("max_id", tweetLoad.getResult().getMaxId()).commit();
             mTweetLoad = tweetLoad;
             setConnectionViews(NetworkInfo.CONNECTED);
         } else if(mStatusArrayList.size() == 0) {
@@ -109,8 +110,8 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
 
     @Override
     public void onRefresh() {
-        mTwitterAPI.loadTweets(3, EVENT_NAME, mSharedPreferences.getLong("max_id", 0), this);
-
+       // mTwitterAPI.loadTweets(3, EVENT_NAME, mSharedPreferences.getLong("max_id", 0), this);
+        mTwitterAPI.loadTweets(3, EVENT_NAME, this);
     }
 
 

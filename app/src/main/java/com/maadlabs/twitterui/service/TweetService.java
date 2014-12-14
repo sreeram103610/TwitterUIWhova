@@ -3,6 +3,7 @@ package com.maadlabs.twitterui.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -18,16 +19,35 @@ public class TweetService extends Service {
     private Handler mHandler;
     private Bundle mResultBundle;
     private Intent mIntent;
-
+    private ICallback mCallback;
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+
+        mIntent = intent;
+        return new LocalBinder();
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        mIntent = intent;
+    public class LocalBinder extends Binder {
+        public TweetService getService() {
+            return TweetService.this;
+        }
+    }
+
+    public Bundle getResultBundle() {
+        return mResultBundle;
+    }
+
+    public interface ICallback {
+        public void onResult(Bundle resultBundle);
+    }
+
+    public void setCallback(ICallback callback) {
+        mCallback = callback;
+    }
+
+    public void startNetworkOperations() {
+
         mResultBundle = new Bundle();
 
 
@@ -52,9 +72,12 @@ public class TweetService extends Service {
 
                 if (tweetResponse.getResult().contains("success") && (requestType.equals("new_tweet") || requestType.equals("reply_tweet"))) {
                     mResultBundle.putString("message", "Tweet Sent!");
+
                 } else if(tweetResponse.getResult().contains("fail")) {
                     mResultBundle.putString("message", "Connection Error");
                 }
+
+                mResultBundle.putString("result", tweetResponse.getResult());
 
                 return null;
             }
@@ -62,13 +85,21 @@ public class TweetService extends Service {
             @Override
             protected void onPostExecute(Object o) {
 
-                if(mResultBundle.getString("message") != null)
-                Toast.makeText(getApplicationContext(), mResultBundle.getString("message"), Toast.LENGTH_LONG).show();
+                if(mResultBundle.getString("message") != null) {
+                    Toast.makeText(getApplicationContext(), mResultBundle.getString("message"), Toast.LENGTH_LONG).show();
+                    mCallback.onResult(mResultBundle);
+                }
             }
         };
 
         asyncTask.execute(new Object[1]);
+    }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        mIntent = intent;
+        startNetworkOperations();
         return Service.START_NOT_STICKY;
     }
 }

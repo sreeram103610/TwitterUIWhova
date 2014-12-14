@@ -34,7 +34,7 @@ public class Status {
     @SerializedName("hashtag")
     private String mHashTag;
 
-    @SerializedName("is_favourite")
+    @SerializedName("is_favorite")
     private boolean mFavourite;
 
     @SerializedName("user_name")

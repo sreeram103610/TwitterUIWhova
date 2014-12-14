@@ -1,9 +1,12 @@
 package com.maadlabs.twitterui.ui;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +22,7 @@ import com.maadlabs.twitterui.service.TweetService;
 import com.maadlabs.twitterui.util.CustomFonts;
 import com.squareup.picasso.Picasso;
 
-public class ComposeTweetFragment extends Fragment implements View.OnClickListener {
+public class ComposeTweetFragment extends Fragment implements View.OnClickListener, TweetService.ICallback {
 
     View mView;
     ImageView mBackImageView;
@@ -29,6 +32,28 @@ public class ComposeTweetFragment extends Fragment implements View.OnClickListen
     Bundle mExtras;
     EditText mComposeMessageEditText;
     Context mContext;
+
+    private TweetService mTweetService;
+    private boolean mBound;
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+
+            TweetService.LocalBinder binder = (TweetService.LocalBinder) service;
+            mTweetService = binder.getService();
+            mTweetService.setCallback(ComposeTweetFragment.this);
+            mTweetService.startNetworkOperations();
+            mBound = true;
+            Log.i("service", "connected");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mBound = false;
+            Log.i("service", "disconnected");
+
+        }
+    };
 
     public ComposeTweetFragment() {
         // Required empty public constructor
@@ -110,8 +135,12 @@ public class ComposeTweetFragment extends Fragment implements View.OnClickListen
         bundle.putString("reply_to_id", mExtras.getString("reply_to_id", ""));
         intent.putExtras(bundle);
         Log.i("tweet", "fn");
-        mContext.startService(intent);
+        mContext.bindService(intent, mServiceConnection, mContext.BIND_AUTO_CREATE);
     }
 
 
+    @Override
+    public void onResult(Bundle resultBundle) {
+
+    }
 }

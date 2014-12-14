@@ -3,9 +3,12 @@ package com.maadlabs.twitterui.ui;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,12 +16,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.maadlabs.twitterui.MainActivity;
 import com.maadlabs.twitterui.R;
 import com.maadlabs.twitterui.model.Status;
+import com.maadlabs.twitterui.model.TweetType;
 import com.maadlabs.twitterui.service.ConnectionManager;
 import com.maadlabs.twitterui.service.TweetService;
 import com.maadlabs.twitterui.util.CustomFonts;
@@ -29,13 +34,38 @@ import java.util.ArrayList;
 /**
  * Created by brainfreak on 11/27/14.
  */
-public class CustomListAdapter extends ArrayAdapter<Status> {
+public class CustomListAdapter extends ArrayAdapter<Status> implements TweetService.ICallback {
 
     Context mContext;
     Activity mActivity;
     int mResource;
     ArrayList<Status> mStatusArrayList;
     View.OnClickListener mOnClickListener;
+    TweetService mTweetService;
+    Status mStatus;
+    StatusHolder mHolder;
+    boolean mServiceActive;
+    private TweetType mServiceType;
+    private boolean mBound;
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+
+            TweetService.LocalBinder binder = (TweetService.LocalBinder) service;
+            mTweetService = binder.getService();
+            mTweetService.setCallback(CustomListAdapter.this);
+            mTweetService.startNetworkOperations();
+            mBound = true;
+            Log.i("service", "connected");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mBound = false;
+            Log.i("service", "disconnected");
+
+        }
+    };
 
     public CustomListAdapter(Activity activity, Context context, int resource, ArrayList<Status> mStatusArrayList) {
         super(context, resource, mStatusArrayList);
@@ -49,7 +79,7 @@ public class CustomListAdapter extends ArrayAdapter<Status> {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         View row;
-        StatusHolder holder = null;
+        StatusHolder holder;
 
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext
@@ -63,6 +93,8 @@ public class CustomListAdapter extends ArrayAdapter<Status> {
             holder.mFavouriteButton = (Button) row.findViewById(R.id.favouriteButton);
             holder.mDisplayPictureImageView = (ImageView) row.findViewById(R.id.userDisplayPictureImageView);
             holder.mReplyButton = (Button) row.findViewById(R.id.replyButton);
+            holder.mTweetContextLinearLayout = (LinearLayout) row.findViewById(R.id.tweetContentLinearLayout);
+            holder.mUserScreenNameTextView = (TextView) row.findViewById(R.id.userScreenNameTextView);
             row.setTag(holder);
         } else {
             row = convertView;
@@ -73,12 +105,22 @@ public class CustomListAdapter extends ArrayAdapter<Status> {
 
         holder.mStatusTextView.setText(status.getText());
         holder.mUserNameTextView.setText(status.getUserName());
+        holder.mUserScreenNameTextView.setText("@" + status.getUserScreenName());
 
+        if((status.getStatusPicture() != null) && (status.getStatusPicture().length() > 0) && (holder.mTweetContextLinearLayout.getChildCount() <= 1)) {
+            Log.i("statusPic", status.getStatusPicture() + " || " + status.getText());
+            ImageView imageView = new ImageView(getContext());
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(300, 300);
+            layoutParams.setMargins(0, 16, 0, 16);
+            imageView.setLayoutParams(layoutParams);
+            Picasso.with(getContext()).load(status.getStatusPicture()).fit().into(imageView);
+            holder.mTweetContextLinearLayout.addView(imageView, 1);
+        }
         initListeners(holder, status);
 
-        if (status.getStatusPicture() != null && status.getStatusPicture().length() > 0) {
-            Log.i("dp", status.getStatusPicture());
-            Picasso.with(getContext()).load(status.getStatusPicture()).fit().into(holder.mDisplayPictureImageView);
+        if (status.getUserPicture() != null && status.getUserPicture().length() > 0) {
+            Log.i("dp", status.getUserPicture());
+            Picasso.with(getContext()).load(status.getUserPicture()).fit().into(holder.mDisplayPictureImageView);
         } else {
             Picasso.with(getContext()).load(R.drawable.user_place_holder).fit().into(holder.mDisplayPictureImageView);
         }
@@ -122,6 +164,7 @@ public class CustomListAdapter extends ArrayAdapter<Status> {
 
                     } else if (viewId == R.id.retweetButton) {
 
+                        setCurrentItem(holder, status, TweetType.RETWEET);
                         String oldCountString = holder.mRetweetButton.getText().toString();
 
                         bundle.putString("type", "retweet");
@@ -129,15 +172,32 @@ public class CustomListAdapter extends ArrayAdapter<Status> {
                         bundle.putString("event_name", FeedsFragment.EVENT_NAME);
                         bundle.putString("tweet_id", status.getTweetId());
                         intent.putExtras(bundle);
-                        getContext().startService(intent);
-                        if (oldCountString.length() > 0) {
-                            holder.mRetweetButton.setText(Integer.parseInt(oldCountString) + 1 + "");
+
+                        if(!status.isRetweet()) {
+                            status.setRetweet(true);
+                            holder.mRetweetButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.retweet_icon, 0, 0, 0);
+
+                            if (oldCountString.length() > 0) {
+                                holder.mRetweetButton.setText(Integer.parseInt(oldCountString) + 1 + "");
+                            } else {
+                                holder.mRetweetButton.setText(1 + "");
+                            }
+
                         } else {
-                            holder.mRetweetButton.setText(1 + "");
+                            status.setRetweet(false);
+                            holder.mRetweetButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.retweet_unchecked, 0, 0, 0);
+
+                            if (oldCountString.length() > 0) {
+                                holder.mRetweetButton.setText(Integer.parseInt(oldCountString) - 1 + "");
+                            } else {
+                                holder.mRetweetButton.setText("");
+                            }
                         }
+                        mContext.bindService(intent, mServiceConnection, mContext.BIND_AUTO_CREATE);
 
                     } else if (viewId == R.id.favouriteButton) {
 
+                        setCurrentItem(holder, status, TweetType.FAVOURITE);
                         String oldCountString = holder.mFavouriteButton.getText().toString();
 
                         bundle.putString("type", "favourite_tweet");
@@ -145,12 +205,28 @@ public class CustomListAdapter extends ArrayAdapter<Status> {
                         bundle.putString("event_name", FeedsFragment.EVENT_NAME);
                         bundle.putString("tweet_id", status.getTweetId());
                         intent.putExtras(bundle);
-                        getContext().startService(intent);
-                        if (oldCountString.length() > 0) {
-                            holder.mFavouriteButton.setText(Integer.parseInt(oldCountString) + 1 + "");
+
+                        if(!status.isFavourite()) {
+                            status.setFavourite(true);
+                            holder.mFavouriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.favourite_icon_checked, 0, 0, 0);
+
+                            if (oldCountString.length() > 0) {
+                                holder.mFavouriteButton.setText(Integer.parseInt(oldCountString) + 1 + "");
+                            } else {
+                                holder.mFavouriteButton.setText(1 + "");
+                            }
+
                         } else {
-                            holder.mFavouriteButton.setText(1 + "");
+                            status.setFavourite(false);
+                            holder.mFavouriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.favourite_icon_unchecked, 0, 0, 0);
+
+                            if (oldCountString.length() > 0) {
+                                holder.mFavouriteButton.setText(Integer.parseInt(oldCountString) - 1 + "");
+                            } else {
+                                holder.mFavouriteButton.setText("");
+                            }
                         }
+                        mContext.bindService(intent, mServiceConnection, mContext.BIND_AUTO_CREATE);
                     }
                 } else {
                     Toast.makeText(getContext(), "Check Internet Connection", Toast.LENGTH_SHORT).show();
@@ -163,13 +239,61 @@ public class CustomListAdapter extends ArrayAdapter<Status> {
         holder.mRetweetButton.setOnClickListener(mOnClickListener);
     }
 
+    private void setCurrentItem(StatusHolder holder, Status status, TweetType type) {
+
+        setServiceActive(true);
+        mHolder = holder;
+        mStatus = status;
+        mServiceType = type;
+    }
+
+    private void setServiceActive(boolean b) {
+
+        mServiceActive = b;
+    }
+
+    private boolean isServiceActive() {
+        return mServiceActive;
+    }
+
+    @Override
+    public void onResult(Bundle resultBundle) {
+
+        if(mServiceType == TweetType.RETWEET) {
+            if(!resultBundle.getString("result").contains("success")) {
+                unsetOption(mHolder);
+
+            }
+        } else if(mServiceType == TweetType.FAVOURITE) {
+            if(!resultBundle.getString("result").contains("success")) {
+                unsetOption(mHolder);
+            }
+        }
+        mStatus = null;
+        mHolder = null;
+        mServiceActive = false;
+    }
+
+    private void unsetOption(StatusHolder holder) {
+
+        if(mServiceType == TweetType.FAVOURITE) {
+            holder.mFavouriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.favourite_icon_unchecked, 0, 0, 0);
+            holder.mFavouriteButton.setText(Integer.parseInt(holder.mFavouriteButton.getText().toString()) - 1 + "");
+            mStatus.setFavourite(false);
+        } else if(mServiceType == TweetType.RETWEET) {
+            holder.mRetweetButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.retweet_unchecked, 0, 0, 0);
+            holder.mRetweetButton.setText(Integer.parseInt(holder.mRetweetButton.getText().toString()) - 1 + "");
+            mStatus.setRetweet(false);
+        }
+    }
+
 
     static class StatusHolder
     {
         ImageView mDisplayPictureImageView;
-        TextView mStatusTextView, mUserNameTextView;
+        TextView mStatusTextView, mUserNameTextView, mUserScreenNameTextView;
         Button mFavouriteButton, mRetweetButton, mReplyButton;
-        ImageView mMediaImageView;
+        LinearLayout mTweetContextLinearLayout;
     }
 
 }

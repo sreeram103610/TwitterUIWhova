@@ -15,32 +15,61 @@
             android:layout_margin="8dp"
             android:id="@+id/userDisplayPictureImageView"/>
 
+    <LinearLayout android:layout_width="wrap_content"
+                  android:orientation="horizontal"
+                  android:id="@+id/userInfoLinearLayout"
+                  android:layout_toRightOf="@id/userDisplayPictureImageView"
+                  android:layout_margin="8dp"
+                  android:layout_marginBottom="16dp"
+                  android:layout_height="wrap_content">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/userNameTextView"
             tools:text="Vivek Yanamandra"
-            android:layout_toRightOf="@id/userDisplayPictureImageView"
-            android:layout_margin="8dp"
             android:textSize="18sp"
             android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/userScreenNameTextView"
+            tools:text="\@vivek"
+            android:textSize="16sp"
+            android:layout_marginLeft="8dp"
+            android:textColor="#ff9d9d9d"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout android:layout_width="wrap_content"
+                  android:orientation="vertical"
+                  android:layout_below="@id/userInfoLinearLayout"
+                  android:id="@+id/tweetContentLinearLayout"
+                  android:layout_alignLeft="@id/userInfoLinearLayout"
+                  android:layout_alignStart="@id/userInfoLinearLayout"
+                  android:layout_marginBottom="16dp"
+                  android:layout_height="wrap_content">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
             tools:text="My First tweet!"
             android:id="@+id/userTweetTextView"
-            android:layout_below="@+id/userNameTextView"
-            android:layout_alignLeft="@+id/userNameTextView"
-            android:layout_alignStart="@+id/userNameTextView"/>
+            android:autoLink="all"
+            />
+
+    </LinearLayout>
 
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_alignLeft="@id/userTweetTextView"
-        android:layout_below="@id/userDisplayPictureImageView"
+        android:layout_alignLeft="@id/tweetContentLinearLayout"
+        android:layout_below="@id/tweetContentLinearLayout"
         android:id="@+id/twitterOptionsLinearLayout"
         >
 
