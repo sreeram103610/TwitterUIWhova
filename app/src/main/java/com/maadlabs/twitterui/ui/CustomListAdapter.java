@@ -48,7 +48,7 @@ public class CustomListAdapter extends ArrayAdapter<Status> implements TweetServ
     private TweetType mServiceType;
     private boolean mBound;
 
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
+    public ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
 
@@ -79,27 +79,25 @@ public class CustomListAdapter extends ArrayAdapter<Status> implements TweetServ
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        View row;
         StatusHolder holder;
 
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = inflater.inflate(mResource, parent, false);  // like a template to add values
+            convertView = inflater.inflate(mResource, parent, false);  // like a template to add values
 
             holder = new StatusHolder();
-            holder.mUserNameTextView = (TextView) row.findViewById(R.id.userNameTextView);
-            holder.mStatusTextView = (TextView) row.findViewById(R.id.userTweetTextView);
-            holder.mRetweetButton = (Button) row.findViewById(R.id.retweetButton);
-            holder.mFavouriteButton = (Button) row.findViewById(R.id.favouriteButton);
-            holder.mDisplayPictureImageView = (ImageView) row.findViewById(R.id.userDisplayPictureImageView);
-            holder.mReplyButton = (Button) row.findViewById(R.id.replyButton);
-            holder.mTweetImageView = (ImageView) row.findViewById(R.id.userTweetImageView);
-            holder.mUserScreenNameTextView = (TextView) row.findViewById(R.id.userScreenNameTextView);
-            row.setTag(holder);
+            holder.mUserNameTextView = (TextView) convertView.findViewById(R.id.userNameTextView);
+            holder.mStatusTextView = (TextView) convertView.findViewById(R.id.userTweetTextView);
+            holder.mRetweetButton = (Button) convertView.findViewById(R.id.retweetButton);
+            holder.mFavouriteButton = (Button) convertView.findViewById(R.id.favouriteButton);
+            holder.mDisplayPictureImageView = (ImageView) convertView.findViewById(R.id.userDisplayPictureImageView);
+            holder.mReplyButton = (Button) convertView.findViewById(R.id.replyButton);
+            holder.mTweetImageView = (ImageView) convertView.findViewById(R.id.userTweetImageView);
+            holder.mUserScreenNameTextView = (TextView) convertView.findViewById(R.id.userScreenNameTextView);
+            convertView.setTag(holder);
         } else {
-            row = convertView;
-            holder = (StatusHolder) row.getTag();
+            holder = (StatusHolder) convertView.getTag();
         }
 
         Status status = mStatusArrayList.get(position);
@@ -121,16 +119,34 @@ public class CustomListAdapter extends ArrayAdapter<Status> implements TweetServ
             Picasso.with(getContext()).load(R.drawable.user_place_holder).fit().into(holder.mDisplayPictureImageView);
         }
 
-        if (status.getFavouriteCount() != null && status.getFavouriteCount() > 0) {
-            if(status.isFavourite())
-                holder.mFavouriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.favourite_icon_checked, 0, 0, 0);
-            holder.mFavouriteButton.setText(status.getFavouriteCount() + "");
-        }
-        if (status.getRetweetCount() != null && status.getRetweetCount() > 0)
-            holder.mRetweetButton.setText(Long.toString(status.getRetweetCount()));
 
-        CustomFonts.init(getContext(), row);
-        return row;
+        if(status.isFavourite()) {
+            holder.mFavouriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.favourite_icon_checked, 0, 0, 0);
+            holder.mFavouriteButton.setText(status.getFavouriteCount() + "");
+        } else {
+            holder.mFavouriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.favourite_icon_unchecked, 0, 0, 0);
+            if (status.getFavouriteCount() != null && status.getFavouriteCount() > 0)
+                holder.mFavouriteButton.setText(status.getFavouriteCount() + "");
+            else
+                holder.mFavouriteButton.setText("");
+        }
+
+
+
+
+            if (status.isRetweet()) {
+                holder.mRetweetButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.retweet_icon, 0, 0, 0);
+                holder.mRetweetButton.setText(Long.toString(status.getRetweetCount()) + "");
+            } else {
+                holder.mRetweetButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.retweet_unchecked, 0, 0, 0);
+                if (status.getRetweetCount() != null && status.getRetweetCount() > 0)
+                    holder.mRetweetButton.setText(status.getRetweetCount() + "");
+                else
+                    holder.mRetweetButton.setText("");
+            }
+
+        CustomFonts.init(getContext(), convertView);
+        return convertView;
     }
 
 
@@ -209,7 +225,7 @@ public class CustomListAdapter extends ArrayAdapter<Status> implements TweetServ
                             status.setFavourite(true);
                             holder.mFavouriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.favourite_icon_checked, 0, 0, 0);
 
-                            if (oldCountString.length() > 0) {
+                            if (oldCountString.length() > 0 && Integer.parseInt(oldCountString) > 0) {
                                 holder.mFavouriteButton.setText(Integer.parseInt(oldCountString) + 1 + "");
                             } else {
                                 holder.mFavouriteButton.setText(1 + "");
@@ -219,7 +235,7 @@ public class CustomListAdapter extends ArrayAdapter<Status> implements TweetServ
                             status.setFavourite(false);
                             holder.mFavouriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.favourite_icon_unchecked, 0, 0, 0);
 
-                            if (oldCountString.length() > 0) {
+                            if (oldCountString.length() > 0 && Integer.parseInt(oldCountString) > 1) {
                                 holder.mFavouriteButton.setText(Integer.parseInt(oldCountString) - 1 + "");
                             } else {
                                 holder.mFavouriteButton.setText("");
@@ -275,13 +291,28 @@ public class CustomListAdapter extends ArrayAdapter<Status> implements TweetServ
 
     private void unsetOption(StatusHolder holder) {
 
+        String count;
+
         if(mServiceType == TweetType.FAVOURITE) {
             holder.mFavouriteButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.favourite_icon_unchecked, 0, 0, 0);
-            holder.mFavouriteButton.setText(Integer.parseInt(holder.mFavouriteButton.getText().toString()) - 1 + "");
+            count = holder.mFavouriteButton.getText().toString();
+
+            if(count.length() > 0 && Integer.parseInt(count) > 1) {
+                holder.mFavouriteButton.setText(Integer.parseInt(count) - 1 + "");
+            } else {
+                holder.mFavouriteButton.setText("");
+            }
+
             mStatus.setFavourite(false);
         } else if(mServiceType == TweetType.RETWEET) {
             holder.mRetweetButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.retweet_unchecked, 0, 0, 0);
-            holder.mRetweetButton.setText(Integer.parseInt(holder.mRetweetButton.getText().toString()) - 1 + "");
+            count = holder.mRetweetButton.getText().toString();
+
+            if(count.length() > 0 && Integer.parseInt(count) > 1) {
+                holder.mRetweetButton.setText(Integer.parseInt(count) - 1 + "");
+            } else {
+                holder.mRetweetButton.setText("");
+            }
             mStatus.setRetweet(false);
         }
     }
@@ -300,5 +331,7 @@ public class CustomListAdapter extends ArrayAdapter<Status> implements TweetServ
         Button mFavouriteButton, mRetweetButton, mReplyButton;
         ImageView mTweetImageView;
     }
+
+
 
 }

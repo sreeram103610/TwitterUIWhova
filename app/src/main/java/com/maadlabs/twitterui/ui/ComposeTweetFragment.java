@@ -166,4 +166,10 @@ public class ComposeTweetFragment extends Fragment implements View.OnClickListen
     public void onResult(Bundle resultBundle) {
 
     }
+
+    @Override
+    public void onStop() {
+        mContext.unbindService(mServiceConnection);
+        super.onStop();
+    }
 }
