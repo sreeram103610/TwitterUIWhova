@@ -47,6 +47,7 @@ public class CustomListAdapter extends ArrayAdapter<Status> implements TweetServ
     boolean mServiceActive;
     private TweetType mServiceType;
     private boolean mBound;
+
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -93,7 +94,7 @@ public class CustomListAdapter extends ArrayAdapter<Status> implements TweetServ
             holder.mFavouriteButton = (Button) row.findViewById(R.id.favouriteButton);
             holder.mDisplayPictureImageView = (ImageView) row.findViewById(R.id.userDisplayPictureImageView);
             holder.mReplyButton = (Button) row.findViewById(R.id.replyButton);
-            holder.mTweetContextLinearLayout = (LinearLayout) row.findViewById(R.id.tweetContentLinearLayout);
+            holder.mTweetImageView = (ImageView) row.findViewById(R.id.userTweetImageView);
             holder.mUserScreenNameTextView = (TextView) row.findViewById(R.id.userScreenNameTextView);
             row.setTag(holder);
         } else {
@@ -107,19 +108,14 @@ public class CustomListAdapter extends ArrayAdapter<Status> implements TweetServ
         holder.mUserNameTextView.setText(status.getUserName());
         holder.mUserScreenNameTextView.setText("@" + status.getUserScreenName());
 
-        if((status.getStatusPicture() != null) && (status.getStatusPicture().length() > 0) && (holder.mTweetContextLinearLayout.getChildCount() <= 1)) {
-            Log.i("statusPic", status.getStatusPicture() + " || " + status.getText());
-            ImageView imageView = new ImageView(getContext());
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(300, 300);
-            layoutParams.setMargins(0, 16, 0, 16);
-            imageView.setLayoutParams(layoutParams);
-            Picasso.with(getContext()).load(status.getStatusPicture()).fit().into(imageView);
-            holder.mTweetContextLinearLayout.addView(imageView, 1);
+        if((status.getStatusPicture() != null) && (status.getStatusPicture().length() > 0)) {
+            holder.mTweetImageView.setVisibility(View.VISIBLE);
+            Picasso.with(getContext()).load(status.getStatusPicture()).resize(dpToPx(120), dpToPx(120)).centerInside().into(
+                    holder.mTweetImageView);
         }
         initListeners(holder, status);
 
         if (status.getUserPicture() != null && status.getUserPicture().length() > 0) {
-            Log.i("dp", status.getUserPicture());
             Picasso.with(getContext()).load(status.getUserPicture()).fit().into(holder.mDisplayPictureImageView);
         } else {
             Picasso.with(getContext()).load(R.drawable.user_place_holder).fit().into(holder.mDisplayPictureImageView);
@@ -136,6 +132,8 @@ public class CustomListAdapter extends ArrayAdapter<Status> implements TweetServ
         CustomFonts.init(getContext(), row);
         return row;
     }
+
+
 
     private void initListeners(final StatusHolder holder, final Status status) {
 
@@ -155,6 +153,7 @@ public class CustomListAdapter extends ArrayAdapter<Status> implements TweetServ
                         extras.putString("type", "reply_tweet");
                         extras.putString("user_name", "UserName");
                         extras.putString("user_image", Integer.toString(R.drawable.user_place_holder));
+                        extras.putString("user_screen_name", status.getUserScreenName());
                         extras.putString("reply_to_id", status.getTweetId());
                         extras.putString("hash_tag", MainActivity.HASHTAG);
                         composeTweetFragment.setArguments(extras);
@@ -288,12 +287,18 @@ public class CustomListAdapter extends ArrayAdapter<Status> implements TweetServ
     }
 
 
+    private int dpToPx(int dp)
+    {
+        float density = getContext().getResources().getDisplayMetrics().density;
+        return Math.round((float)dp * density);
+    }
+
     static class StatusHolder
     {
         ImageView mDisplayPictureImageView;
         TextView mStatusTextView, mUserNameTextView, mUserScreenNameTextView;
         Button mFavouriteButton, mRetweetButton, mReplyButton;
-        LinearLayout mTweetContextLinearLayout;
+        ImageView mTweetImageView;
     }
 
 }

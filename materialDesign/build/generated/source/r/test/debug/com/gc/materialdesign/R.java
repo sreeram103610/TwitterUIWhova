@@ -15,7 +15,7 @@ public final class R {
 	public static final class attr {
 		public static final int animate = 0x7f010007;
 		public static final int check = 0x7f010005;
-		public static final int icon = 0x7f010006;
+		public static final int icon_material = 0x7f010006;
 		public static final int max = 0x7f010001;
 		public static final int min = 0x7f010002;
 		public static final int progress = 0x7f010004;
@@ -93,7 +93,7 @@ public final class R {
 		public static final int[] CustomAttributes = { 0x7f010000, 0x7f010001, 0x7f010002, 0x7f010003, 0x7f010004, 0x7f010005, 0x7f010006, 0x7f010007 };
 		public static final int CustomAttributes_animate = 7;
 		public static final int CustomAttributes_check = 5;
-		public static final int CustomAttributes_icon = 6;
+		public static final int CustomAttributes_icon_material = 6;
 		public static final int CustomAttributes_max = 1;
 		public static final int CustomAttributes_min = 2;
 		public static final int CustomAttributes_progress = 4;

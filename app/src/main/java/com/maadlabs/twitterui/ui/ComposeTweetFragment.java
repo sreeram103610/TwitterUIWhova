@@ -24,6 +24,7 @@ import com.squareup.picasso.Picasso;
 
 public class ComposeTweetFragment extends Fragment implements View.OnClickListener, TweetService.ICallback {
 
+    public static final String COMPOSE_MESSAGE_TEXT = "compose_message_text";
     View mView;
     ImageView mBackImageView;
     ButtonFlat mTweetButtonFlat;
@@ -76,14 +77,34 @@ public class ComposeTweetFragment extends Fragment implements View.OnClickListen
         mContext = getActivity().getBaseContext();
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(COMPOSE_MESSAGE_TEXT, mComposeMessageEditText.getText().toString());
+        super.onSaveInstanceState(outState);
+    }
+
     private void initUserViews() {
 
-        mComposeMessageEditText.setText(mExtras.getString("hash_tag"));
+        if(mExtras.getString("type").contains("reply_tweet")) {
+            mComposeMessageEditText.setText("@" + mExtras.getString("user_screen_name"));
+            mComposeMessageEditText.setText(mComposeMessageEditText.getText().toString() + " " + mExtras.getString("hash_tag"));
+        } else {
+            mComposeMessageEditText.setText(mExtras.getString("hash_tag"));
+        }
+
         mUserNameTextView.setText(mExtras.getString("user_name"));
         Picasso.with(getActivity().getBaseContext()).load(Integer.parseInt(mExtras.getString("user_image"))).fit()
                 .into(mUserImageView);
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+
+        if(savedInstanceState != null && savedInstanceState.containsKey(COMPOSE_MESSAGE_TEXT)) {
+            mComposeMessageEditText.setText(savedInstanceState.getString(COMPOSE_MESSAGE_TEXT));
+        }
+        super.onActivityCreated(savedInstanceState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -96,6 +117,8 @@ public class ComposeTweetFragment extends Fragment implements View.OnClickListen
         CustomFonts.init(mContext, mView);
         return mView;
     }
+
+
 
     private void initReferences() {
         mBackImageView = (ImageView) mView.findViewById(R.id.backButtonImageView);

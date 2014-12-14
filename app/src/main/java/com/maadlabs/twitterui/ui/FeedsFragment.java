@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.gc.materialdesign.views.ButtonRectangle;
+import com.gc.materialdesign.views.ProgressBarCircularIndetermininate;
 import com.maadlabs.twitterui.MainActivity;
 import com.maadlabs.twitterui.R;
 import com.maadlabs.twitterui.model.Status;
@@ -47,7 +48,7 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
     ButtonRectangle mRetryButton;
     Button mReplyButton, mRetweetButton, mFavouriteButton;
     LinearLayout mNoConnectionLinearLayout;
-    CircularProgressBar mProgressBar;
+    ProgressBarCircularIndetermininate mProgressBar;
     TwitterAPI mTwitterAPI;
     ArrayList<Status> mStatusArrayList;
     CustomListAdapter mTweetsAdapter;
@@ -162,7 +163,7 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Status status = (Status) parent.getAdapter().getItem(position);
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/search?q=%23" + MainActivity.HASHTAG.substring(1)));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/" + status.getUserScreenName() + "/status/" + status.getTweetId()));
                 startActivity(browserIntent);
             }
         });
@@ -218,7 +219,7 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
         mRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.swipeRefreshLayout);
         mRetryButton = (ButtonRectangle) mView.findViewById(R.id.retryConnectionButton);
         mNoConnectionLinearLayout = (LinearLayout) mView.findViewById(R.id.noConnectionLinearLayout);
-        mProgressBar = (CircularProgressBar) mView.findViewById(R.id.circularProgressBar);
+        mProgressBar = (ProgressBarCircularIndetermininate) mView.findViewById(R.id.circularProgressBar);
         mNoTweetsTextView = (TextView) mView.findViewById(R.id.noTweetsTextView);
         mTweetEditText = (EditText) mView.findViewById(R.id.newTweetEditText);
         mFeedsFrameLayout = (FrameLayout) mView.findViewById(R.id.feedsFrameLayout);

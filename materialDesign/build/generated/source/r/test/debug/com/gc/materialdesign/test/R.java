@@ -37,7 +37,7 @@ theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
          */
-        public static final int icon=0x7f010006;
+        public static final int icon_material=0x7f010006;
         /** <p>Must be an integer value, such as "<code>100</code>".
 <p>This may also be a reference to a resource (in the form
 "<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
@@ -158,7 +158,7 @@ containing a value of this type.
            <tr><th>Attribute</th><th>Description</th></tr>
            <tr><td><code>{@link #CustomAttributes_animate com.gc.materialdesign.test:animate}</code></td><td></td></tr>
            <tr><td><code>{@link #CustomAttributes_check com.gc.materialdesign.test:check}</code></td><td></td></tr>
-           <tr><td><code>{@link #CustomAttributes_icon com.gc.materialdesign.test:icon}</code></td><td></td></tr>
+           <tr><td><code>{@link #CustomAttributes_icon_material com.gc.materialdesign.test:icon_material}</code></td><td></td></tr>
            <tr><td><code>{@link #CustomAttributes_max com.gc.materialdesign.test:max}</code></td><td></td></tr>
            <tr><td><code>{@link #CustomAttributes_min com.gc.materialdesign.test:min}</code></td><td></td></tr>
            <tr><td><code>{@link #CustomAttributes_progress com.gc.materialdesign.test:progress}</code></td><td></td></tr>
@@ -167,7 +167,7 @@ containing a value of this type.
            </table>
            @see #CustomAttributes_animate
            @see #CustomAttributes_check
-           @see #CustomAttributes_icon
+           @see #CustomAttributes_icon_material
            @see #CustomAttributes_max
            @see #CustomAttributes_min
            @see #CustomAttributes_progress
@@ -207,7 +207,7 @@ containing a value of this type.
         */
         public static final int CustomAttributes_check = 5;
         /**
-          <p>This symbol is the offset where the {@link com.gc.materialdesign.test.R.attr#icon}
+          <p>This symbol is the offset where the {@link com.gc.materialdesign.test.R.attr#icon_material}
           attribute's value can be found in the {@link #CustomAttributes} array.
 
 
@@ -217,9 +217,9 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.gc.materialdesign.test:icon
+          @attr name com.gc.materialdesign.test:icon_material
         */
-        public static final int CustomAttributes_icon = 6;
+        public static final int CustomAttributes_icon_material = 6;
         /**
           <p>This symbol is the offset where the {@link com.gc.materialdesign.test.R.attr#max}
           attribute's value can be found in the {@link #CustomAttributes} array.

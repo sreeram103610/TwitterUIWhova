@@ -37,7 +37,7 @@ theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
          */
-        public static int icon=0x7f010006;
+        public static int icon_material=0x7f010006;
         /** <p>Must be an integer value, such as "<code>100</code>".
 <p>This may also be a reference to a resource (in the form
 "<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
@@ -158,7 +158,7 @@ containing a value of this type.
            <tr><th>Attribute</th><th>Description</th></tr>
            <tr><td><code>{@link #CustomAttributes_animate com.gc.materialdesign:animate}</code></td><td></td></tr>
            <tr><td><code>{@link #CustomAttributes_check com.gc.materialdesign:check}</code></td><td></td></tr>
-           <tr><td><code>{@link #CustomAttributes_icon com.gc.materialdesign:icon}</code></td><td></td></tr>
+           <tr><td><code>{@link #CustomAttributes_icon_material com.gc.materialdesign:icon_material}</code></td><td></td></tr>
            <tr><td><code>{@link #CustomAttributes_max com.gc.materialdesign:max}</code></td><td></td></tr>
            <tr><td><code>{@link #CustomAttributes_min com.gc.materialdesign:min}</code></td><td></td></tr>
            <tr><td><code>{@link #CustomAttributes_progress com.gc.materialdesign:progress}</code></td><td></td></tr>
@@ -167,7 +167,7 @@ containing a value of this type.
            </table>
            @see #CustomAttributes_animate
            @see #CustomAttributes_check
-           @see #CustomAttributes_icon
+           @see #CustomAttributes_icon_material
            @see #CustomAttributes_max
            @see #CustomAttributes_min
            @see #CustomAttributes_progress
@@ -191,7 +191,7 @@ theme attribute (in the form
 containing a value of this type.
           @attr name com.gc.materialdesign:animate
         */
-        public static final int CustomAttributes_animate = 7;
+        public static int CustomAttributes_animate = 7;
         /**
           <p>This symbol is the offset where the {@link com.gc.materialdesign.R.attr#check}
           attribute's value can be found in the {@link #CustomAttributes} array.
@@ -205,9 +205,9 @@ theme attribute (in the form
 containing a value of this type.
           @attr name com.gc.materialdesign:check
         */
-        public static final int CustomAttributes_check = 5;
+        public static int CustomAttributes_check = 5;
         /**
-          <p>This symbol is the offset where the {@link com.gc.materialdesign.R.attr#icon}
+          <p>This symbol is the offset where the {@link com.gc.materialdesign.R.attr#icon_material}
           attribute's value can be found in the {@link #CustomAttributes} array.
 
 
@@ -217,9 +217,9 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.gc.materialdesign:icon
+          @attr name com.gc.materialdesign:icon_material
         */
-        public static final int CustomAttributes_icon = 6;
+        public static int CustomAttributes_icon_material = 6;
         /**
           <p>This symbol is the offset where the {@link com.gc.materialdesign.R.attr#max}
           attribute's value can be found in the {@link #CustomAttributes} array.
@@ -233,7 +233,7 @@ theme attribute (in the form
 containing a value of this type.
           @attr name com.gc.materialdesign:max
         */
-        public static final int CustomAttributes_max = 1;
+        public static int CustomAttributes_max = 1;
         /**
           <p>This symbol is the offset where the {@link com.gc.materialdesign.R.attr#min}
           attribute's value can be found in the {@link #CustomAttributes} array.
@@ -247,7 +247,7 @@ theme attribute (in the form
 containing a value of this type.
           @attr name com.gc.materialdesign:min
         */
-        public static final int CustomAttributes_min = 2;
+        public static int CustomAttributes_min = 2;
         /**
           <p>This symbol is the offset where the {@link com.gc.materialdesign.R.attr#progress}
           attribute's value can be found in the {@link #CustomAttributes} array.
@@ -261,7 +261,7 @@ theme attribute (in the form
 containing a value of this type.
           @attr name com.gc.materialdesign:progress
         */
-        public static final int CustomAttributes_progress = 4;
+        public static int CustomAttributes_progress = 4;
         /**
           <p>This symbol is the offset where the {@link com.gc.materialdesign.R.attr#showNumberIndicator}
           attribute's value can be found in the {@link #CustomAttributes} array.
@@ -275,7 +275,7 @@ theme attribute (in the form
 containing a value of this type.
           @attr name com.gc.materialdesign:showNumberIndicator
         */
-        public static final int CustomAttributes_showNumberIndicator = 0;
+        public static int CustomAttributes_showNumberIndicator = 0;
         /**
           <p>This symbol is the offset where the {@link com.gc.materialdesign.R.attr#value}
           attribute's value can be found in the {@link #CustomAttributes} array.
@@ -289,6 +289,6 @@ theme attribute (in the form
 containing a value of this type.
           @attr name com.gc.materialdesign:value
         */
-        public static final int CustomAttributes_value = 3;
+        public static int CustomAttributes_value = 3;
     };
 }
