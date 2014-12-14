@@ -25,6 +25,7 @@ public class TweetService extends Service {
     public IBinder onBind(Intent intent) {
 
         mIntent = intent;
+        startNetworkOperations(mIntent);
         return new LocalBinder();
     }
 
@@ -46,8 +47,14 @@ public class TweetService extends Service {
         mCallback = callback;
     }
 
-    public void startNetworkOperations() {
+    @Override
+    public void onRebind(Intent intent) {
+        super.onRebind(intent);
+    }
 
+    public void startNetworkOperations(Intent intent) {
+
+        mIntent = intent;
         mResultBundle = new Bundle();
 
 
@@ -99,7 +106,7 @@ public class TweetService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         mIntent = intent;
-        startNetworkOperations();
+        startNetworkOperations(mIntent);
         return Service.START_NOT_STICKY;
     }
 }

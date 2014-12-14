@@ -55,7 +55,6 @@ public class CustomListAdapter extends ArrayAdapter<Status> implements TweetServ
             TweetService.LocalBinder binder = (TweetService.LocalBinder) service;
             mTweetService = binder.getService();
             mTweetService.setCallback(CustomListAdapter.this);
-            mTweetService.startNetworkOperations();
             mBound = true;
             Log.i("service", "connected");
         }
@@ -110,7 +109,9 @@ public class CustomListAdapter extends ArrayAdapter<Status> implements TweetServ
             holder.mTweetImageView.setVisibility(View.VISIBLE);
             Picasso.with(getContext()).load(status.getStatusPicture()).resize(dpToPx(120), dpToPx(120)).centerInside().into(
                     holder.mTweetImageView);
-        }
+        } else
+            holder.mTweetImageView.setVisibility(View.GONE);
+
         initListeners(holder, status);
 
         if (status.getUserPicture() != null && status.getUserPicture().length() > 0) {
@@ -134,16 +135,16 @@ public class CustomListAdapter extends ArrayAdapter<Status> implements TweetServ
 
 
 
-            if (status.isRetweet()) {
-                holder.mRetweetButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.retweet_icon, 0, 0, 0);
-                holder.mRetweetButton.setText(Long.toString(status.getRetweetCount()) + "");
-            } else {
-                holder.mRetweetButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.retweet_unchecked, 0, 0, 0);
-                if (status.getRetweetCount() != null && status.getRetweetCount() > 0)
-                    holder.mRetweetButton.setText(status.getRetweetCount() + "");
-                else
-                    holder.mRetweetButton.setText("");
-            }
+        if (status.isRetweet()) {
+            holder.mRetweetButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.retweet_icon, 0, 0, 0);
+            holder.mRetweetButton.setText(Long.toString(status.getRetweetCount()) + "");
+        } else {
+            holder.mRetweetButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.retweet_unchecked, 0, 0, 0);
+            if (status.getRetweetCount() != null && status.getRetweetCount() > 0)
+                holder.mRetweetButton.setText(status.getRetweetCount() + "");
+            else
+                holder.mRetweetButton.setText("");
+        }
 
         CustomFonts.init(getContext(), convertView);
         return convertView;
@@ -208,7 +209,10 @@ public class CustomListAdapter extends ArrayAdapter<Status> implements TweetServ
                                 holder.mRetweetButton.setText("");
                             }
                         }
-                        mContext.bindService(intent, mServiceConnection, mContext.BIND_AUTO_CREATE);
+                        if(!mBound)
+                            mContext.bindService(intent, mServiceConnection, mContext.BIND_AUTO_CREATE);
+                        else
+                            mTweetService.startNetworkOperations(intent);
 
                     } else if (viewId == R.id.favouriteButton) {
 
@@ -241,7 +245,10 @@ public class CustomListAdapter extends ArrayAdapter<Status> implements TweetServ
                                 holder.mFavouriteButton.setText("");
                             }
                         }
-                        mContext.bindService(intent, mServiceConnection, mContext.BIND_AUTO_CREATE);
+                        if(!mBound)
+                            mContext.bindService(intent, mServiceConnection, mContext.BIND_AUTO_CREATE);
+                        else
+                            mTweetService.startNetworkOperations(intent);
                     }
                 } else {
                     Toast.makeText(getContext(), "Check Internet Connection", Toast.LENGTH_SHORT).show();

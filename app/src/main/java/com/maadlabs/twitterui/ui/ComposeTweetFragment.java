@@ -43,7 +43,6 @@ public class ComposeTweetFragment extends Fragment implements View.OnClickListen
             TweetService.LocalBinder binder = (TweetService.LocalBinder) service;
             mTweetService = binder.getService();
             mTweetService.setCallback(ComposeTweetFragment.this);
-            mTweetService.startNetworkOperations();
             mBound = true;
             Log.i("service", "connected");
         }
@@ -169,7 +168,6 @@ public class ComposeTweetFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onStop() {
-        mContext.unbindService(mServiceConnection);
         super.onStop();
     }
 }
