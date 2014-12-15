@@ -19,7 +19,7 @@ public interface TwitterAPI {
     public void loadTweets(@Query("user_id") Integer userId, @Query("event") String eventId, Callback<TweetLoad> tweetLoadCallback);
 
     @GET("/event/tw/load/")
-    public void loadTweets(@Query("user_id") Integer userId, @Query("event") String eventId, @Query("max_id") Long max_id, Callback<TweetLoad> tweetLoadCallback);
+    public TweetLoad loadTweets(@Query("user_id") Integer userId, @Query("event") String eventId, @Query("max_id") Long max_id);
 
     @FormUrlEncoded
     @POST("/event/tw/new/")

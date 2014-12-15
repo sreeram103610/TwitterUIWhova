@@ -6,12 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +34,7 @@ import com.maadlabs.twitterui.service.MyServer;
 import com.maadlabs.twitterui.service.TwitterAPI;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import retrofit.Callback;
@@ -44,6 +48,7 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
     public static final int USER_ID = 3;
     View mView;
     ListView mTweetsListView;
+    String mMaxTweetId;
     SwipeRefreshLayout mRefreshLayout;
     ButtonRectangle mRetryButton;
     Button mReplyButton, mRetweetButton, mFavouriteButton;
@@ -58,6 +63,7 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
     EditText mTweetEditText;
     TweetLoad mTweetLoad;
     FrameLayout mFeedsFrameLayout;
+    private boolean mIsLoading;
 
     public static FeedsFragment newInstance(String param1, String param2) {
         FeedsFragment fragment = new FeedsFragment();
@@ -71,7 +77,7 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
             mStatusArrayList.clear();
             mStatusArrayList.addAll(0, tweetLoad.getResult().getStatusList());
             mTweetsAdapter.notifyDataSetChanged();
-         //   mSharedPreferences.edit().putLong("max_id", tweetLoad.getResult().getMaxId()).commit();
+            mMaxTweetId = mStatusArrayList.get(mStatusArrayList.size() - 1).getTweetId();
             mTweetLoad = tweetLoad;
             setConnectionViews(NetworkInfo.CONNECTED);
         } else if(mStatusArrayList.size() == 0) {
@@ -145,8 +151,7 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
 
     private void initProperties() {
         mRefreshLayout.setOnRefreshListener(this);
-        mRefreshLayout.setColorScheme(android.R.color.holo_blue_bright, android.R.color.holo_blue_dark, android.R.color.holo_blue_light,
-                android.R.color.holo_blue_bright);
+        mRefreshLayout.setColorSchemeColors(android.R.color.holo_blue_bright);
     }
 
     private void initAdapters() {
@@ -167,6 +172,46 @@ public class FeedsFragment extends Fragment implements Callback<TweetLoad>, View
                 startActivity(browserIntent);
             }
         });
+
+        mTweetsListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+
+            }
+
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+
+                if(firstVisibleItem + visibleItemCount == totalItemCount && totalItemCount!=0)
+                {
+                    if(mIsLoading == false)
+                    {
+                        mIsLoading = true;
+                        AsyncTask<Object, Object, ArrayList<Status>> loadMoreTweetsTask = new AsyncTask<Object, Object, ArrayList<Status>>() {
+
+                            @Override
+                            protected ArrayList<com.maadlabs.twitterui.model.Status> doInBackground(Object[] params) {
+                                TweetLoad tweetLoad = mTwitterAPI.loadTweets(3, EVENT_NAME, Long.parseLong(mMaxTweetId));
+                                if (tweetLoad.getResult().getMaxId() != -1) {
+                                    mStatusArrayList.addAll(tweetLoad.getResult().getStatusList());
+                                    mMaxTweetId = mStatusArrayList.get(mStatusArrayList.size() - 1).getTweetId();
+                                }
+                                return tweetLoad.getResult().getStatusList();
+                            }
+
+                            @Override
+                            protected void onPostExecute(ArrayList<com.maadlabs.twitterui.model.Status> o) {
+                                mTweetsAdapter.notifyDataSetChanged();
+                                mIsLoading = false;
+                            }
+                        };
+                        loadMoreTweetsTask.execute(new Object[1]);
+                    }
+                }
+            }
+        });
+
     }
 
     private void initData() {
