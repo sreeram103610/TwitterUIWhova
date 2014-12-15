@@ -24,7 +24,7 @@ final static String ANDROIDXML = "http://schemas.android.com/apk/res/android";
 	int minWidth;
 	int minHeight;
 	int background;
-	float rippleSpeed = 10f;
+	float rippleSpeed = 20f;
 	int rippleSize = 3;
 
 	OnClickListener onClickListener;

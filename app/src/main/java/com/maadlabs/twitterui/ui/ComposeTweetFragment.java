@@ -157,7 +157,11 @@ public class ComposeTweetFragment extends Fragment implements View.OnClickListen
         bundle.putString("reply_to_id", mExtras.getString("reply_to_id", ""));
         intent.putExtras(bundle);
         Log.i("tweet", "fn");
-        mContext.bindService(intent, mServiceConnection, mContext.BIND_AUTO_CREATE);
+
+        if(!mBound)
+            mContext.bindService(intent, mServiceConnection, mContext.BIND_AUTO_CREATE);
+        else
+            mTweetService.startNetworkOperations(intent);
     }
 
 
@@ -167,7 +171,9 @@ public class ComposeTweetFragment extends Fragment implements View.OnClickListen
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onDestroy() {
+        if(mBound)
+            mContext.unbindService(mServiceConnection);
+        super.onDestroy();
     }
 }
